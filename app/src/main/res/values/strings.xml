@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">AgVideoCall</string>
+    <string name="agora_app_id">472ae955f99e4504bdcab46076057afb</string>
+    <string name="google_native_ad_test_unit_id">ca-app-pub-3940256099942544/2247696110</string>
+    <string name="google_native_app_id">ca-app-pub-3673177676873970~4805873113</string>
+
+    <string name="start_video_call_text">Get Started</string>
+    <string name="end_video_call_text">Disconnect</string>
+    <string name="ad">Ad</string>
+    <string name="try_again_msg">Try again after sometime</string>
+</resources>
