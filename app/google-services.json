@@ -1,0 +1,77 @@
+{
+  "project_info": {
+    "project_number": "276101416943",
+    "firebase_url": "https://videocall-ae379.firebaseio.com",
+    "project_id": "videocall-ae379",
+    "storage_bucket": "videocall-ae379.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:276101416943:android:579025ce4cb135b0fad81a",
+        "android_client_info": {
+          "package_name": "com.example.agvideocall"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "276101416943-3diu9l2d07siv53u47th54ghohpikcnq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.agvideocall",
+            "certificate_hash": "6c0879f3d0bf96a1d8d30e1cfe28196b3dbb2bc1"
+          }
+        },
+        {
+          "client_id": "276101416943-g372dvpdtl5uc7vkg7br0grl6tlh7tls.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBWjczjYxmbpZejVbpwL2kflYu564-rmio"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "276101416943-g372dvpdtl5uc7vkg7br0grl6tlh7tls.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:276101416943:android:f572fdc7e898f041fad81a",
+        "android_client_info": {
+          "package_name": "com.example.videocall"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "276101416943-g372dvpdtl5uc7vkg7br0grl6tlh7tls.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBWjczjYxmbpZejVbpwL2kflYu564-rmio"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "276101416943-g372dvpdtl5uc7vkg7br0grl6tlh7tls.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

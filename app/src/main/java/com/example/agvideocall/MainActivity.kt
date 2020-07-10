@@ -20,6 +20,11 @@ import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.ads.formats.MediaView
 import com.google.android.gms.ads.formats.UnifiedNativeAd
 import com.google.android.gms.ads.formats.UnifiedNativeAdView
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import io.agora.rtc.Constants
 import io.agora.rtc.IRtcEngineEventHandler
 import io.agora.rtc.RtcEngine
@@ -31,6 +36,8 @@ class MainActivity : AppCompatActivity() {
 
     private val PERMISSION_REQUEST_ID = 1001
     private val REQUESTED_PERMISSIONS = arrayOf(Manifest.permission.RECORD_AUDIO, Manifest.permission.CAMERA)
+    private val ROOM_NAME = "agora_room"
+    private val DEFAULT_CHANNEL_NAME = "channel-1"
 
     private var mRtcEngine: RtcEngine? = null
     private var doubleBackToExitPressedOnce = false
@@ -38,6 +45,12 @@ class MainActivity : AppCompatActivity() {
     private var nativeAd: UnifiedNativeAd? = null
     private lateinit var mHandler: Handler
     private val mInterval = 15000
+    private var currentChannel = ""
+    private var channelAvailable = true
+
+    // Write a message to the database
+    private val myDatabase = Firebase.database
+    private val myRef = myDatabase.reference
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,7 +60,62 @@ class MainActivity : AppCompatActivity() {
         getAds()
 
         mHandler = Handler()
-        bindAndSetupUi();
+        bindAndSetupUi()
+        firebaseListener()
+    }
+
+    private fun firebaseListener() {
+        // Read from the database
+        myRef.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                // This method is called once with the initial value and again
+                // whenever data at this location is updated.
+                updateChannelStatus(dataSnapshot)
+            }
+            override fun onCancelled(error: DatabaseError) {
+                // Failed to read value
+                Log.w("ABC__", "Failed to read value.", error.toException())
+            }
+        })
+
+    }
+
+    private fun updateChannelStatus(dataSnapshot: DataSnapshot) {
+        Toast.makeText(this, "update called", Toast.LENGTH_SHORT).show()
+        if (dataSnapshot.children.count() == 0) {
+            // create channel if not available
+            currentChannel = DEFAULT_CHANNEL_NAME
+            createOrUpdateDatabaseWithChannelId(DEFAULT_CHANNEL_NAME, true)
+        } else {
+            var falseCount = 0
+            for (channel in dataSnapshot.child(ROOM_NAME).children) {
+                Log.d("ABC__00", "channelName: " + channel.key + " channelStatus: " + channel.value)
+                if (channel.value == false)
+                    falseCount++
+                if (channel.value == true) {
+                    channelAvailable = true
+                    // setCurrent channel
+                    currentChannel = channel.key.toString()
+                    Log.d("ABC__111", "channelName: " + channel.key + " channelStatus: " + channel.value)
+                    break
+                } else {
+                    if (falseCount == dataSnapshot.child(ROOM_NAME).children.count()) {
+                        val channelNo = dataSnapshot.child(ROOM_NAME).children.count() + 1
+                        currentChannel = "channel-$channelNo"
+                        Log.d("ABC__222", "channelName: " + currentChannel + " channelStatus: " + !channelAvailable)
+                        createOrUpdateDatabaseWithChannelId(currentChannel, true)
+                        channelAvailable = true
+                        break
+                    }
+                    continue
+                }
+            }
+        }
+
+    }
+
+    private fun createOrUpdateDatabaseWithChannelId(currentChId: String, channelStatus: Boolean) {
+        myRef.child(ROOM_NAME).child(currentChId).setValue(channelStatus)
     }
 
     private fun bindAndSetupUi() {
@@ -118,6 +186,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupRemoteVideoStream(uid: Int) {
+        createOrUpdateDatabaseWithChannelId(currentChannel, false)
         val videoContainer = findViewById<FrameLayout>(R.id.remote_video_view)
         val videoSurface = RtcEngine.CreateRendererView(baseContext)
         videoContainer.addView(videoSurface)
@@ -149,7 +218,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun joinChannel() {
-        mRtcEngine!!.joinChannel(null, "test-channel", "Extra Optional Data", 0)
+        Toast.makeText(this, "chNo: $currentChannel", Toast.LENGTH_LONG).show()
+        mRtcEngine!!.joinChannel(null, currentChannel, "Extra Optional Data", 0)
         setupLocalVideoFeed()
     }
 
@@ -157,6 +227,7 @@ class MainActivity : AppCompatActivity() {
         leaveChannel()
         removeVideo(R.id.local_video_view)
         removeVideo(R.id.remote_video_view)
+//        createOrUpdateDatabaseWithChannelId(currentChannel, true)
     }
 
     private fun leaveChannel() {
@@ -183,7 +254,7 @@ class MainActivity : AppCompatActivity() {
             AdLoader.Builder(this, getString(R.string.google_native_ad_test_unit_id))
         builder.forUnifiedNativeAd { unifiedNativeAd ->
             if (nativeAd == null) nativeAd = unifiedNativeAd
-            Toast.makeText(this@MainActivity, "New ad loaded", Toast.LENGTH_SHORT).show()
+//            Toast.makeText(this@MainActivity, "New ad loaded", Toast.LENGTH_SHORT).show()
             val adView = layoutInflater.inflate(
                 R.layout.native_ad_layout,
                 null
@@ -194,7 +265,7 @@ class MainActivity : AppCompatActivity() {
         }
         val adLoader = builder.withAdListener(object : AdListener() {
             override fun onAdFailedToLoad(i: Int) {
-                Toast.makeText(this@MainActivity, "Ad failed to load", Toast.LENGTH_SHORT).show()
+//                Toast.makeText(this@MainActivity, "Ad failed to load", Toast.LENGTH_SHORT).show()
                 super.onAdFailedToLoad(i)
             }
         }).build()
