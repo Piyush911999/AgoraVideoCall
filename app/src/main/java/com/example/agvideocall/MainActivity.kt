@@ -81,7 +81,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updateChannelStatus(dataSnapshot: DataSnapshot) {
-        Toast.makeText(this, "update called", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, "FireDB Updated", Toast.LENGTH_SHORT).show()
         if (dataSnapshot.children.count() == 0) {
             // create channel if not available
             currentChannel = DEFAULT_CHANNEL_NAME
@@ -218,7 +218,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun joinChannel() {
-        Toast.makeText(this, "chNo: $currentChannel", Toast.LENGTH_LONG).show()
+//        Toast.makeText(this, "chNo: $currentChannel", Toast.LENGTH_LONG).show()
         mRtcEngine!!.joinChannel(null, currentChannel, "Extra Optional Data", 0)
         setupLocalVideoFeed()
     }
