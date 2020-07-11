@@ -77,7 +77,6 @@ class MainActivity : AppCompatActivity() {
                 Log.w("ABC__", "Failed to read value.", error.toException())
             }
         })
-
     }
 
     private fun updateChannelStatus(dataSnapshot: DataSnapshot) {
